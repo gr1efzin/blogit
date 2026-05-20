@@ -12,6 +12,7 @@
       "DOM"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx"
-  },
+    "jsxImportSource": "hono/jsx",
+    "types" : ["node"]
+  }
 }
