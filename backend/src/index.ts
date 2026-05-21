@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { PrismaClient, Prisma } from "./generated/client";
+import { PrismaClient, Prisma } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { sign, verify } from 'hono/jwt'
 
@@ -117,7 +117,7 @@ app.get('/api/v1/blog/:id', (c) => {
 
 app.post('/api/v1/blog', (c) => {
 
-	return c.text('signin route')
+	return c.json({"message" : 'Posted'})
 })
 
 app.put('/api/v1/blog', (c) => {
