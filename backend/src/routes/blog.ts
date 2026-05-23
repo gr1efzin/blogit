@@ -76,7 +76,7 @@ blogRouter.put('/', async (c) => {
 })
 
 blogRouter.get('/:id', async (c) => {
-  const id = await c.req.param('id');
+  const id = c.req.param('id');
   const prisma = c.get('prisma');
 
   try{
@@ -96,12 +96,12 @@ blogRouter.get('/:id', async (c) => {
   }
 })
 
-blogRouter.put('/bulk', async (c) => {
+blogRouter.get('/', async (c) => {
   const prisma = c.get('prisma');
 
   try {
     const blogs = await prisma.blog.findMany();
-    return c.json({ blogs }, 200);
+    return c.json({ "blogs":blogs }, 200);
   } catch(e) {
     return c.json({ error: "Error fetching blogs" }, 500);
   }

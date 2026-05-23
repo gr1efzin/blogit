@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { Prisma } from "@prisma/client/edge";
 import { sign } from 'hono/jwt';
-import { AppEnvironment } from '../types';
+import { AppEnvironment, hashPassword } from '../types';
 
 export const userRouter = new Hono<AppEnvironment>();
 
@@ -11,11 +11,12 @@ userRouter.post('/signup', async (c) => {
 
   try{
     const body = await c.req.json();
+    const hashedPassword = await hashPassword(body.password);
     const user = await prisma.user.create({
       data:{
         email : body.email,
         name : body.name,
-        password : body.password
+        password : hashedPassword
       }
     });
 
@@ -39,16 +40,17 @@ userRouter.post('/signup', async (c) => {
   }
 });
 
-userRouter.post('/signin', async (c) => {
+userRouter.post('/login', async (c) => {
   
   const prisma = c.get('prisma');
 
   try {
     const body = await c.req.json();
+    const hashedAttempt = await hashPassword(body.password);
     const user = await prisma.user.findUnique({
       where: {
         email: body.email,
-        password : body.password
+        password : hashedAttempt
       }
     });
 
@@ -57,8 +59,10 @@ userRouter.post('/signin', async (c) => {
     }
 
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET, 'HS256');
-    return c.json({ jwt }, 200);
-
+    return c.json({ 
+      Response: "Logged-in Successfully",
+      "jwt" : jwt }, 200
+    );
   } catch (e: unknown) {
     return c.json({ error: "Error while signing in" }, 403);
   }
