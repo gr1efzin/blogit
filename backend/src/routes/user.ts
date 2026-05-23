@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { Prisma } from "@prisma/client/edge";
 import { sign } from 'hono/jwt';
 import { AppEnvironment, hashPassword } from '../types';
+import { signupInput, loginInput } from '../validation';
 
 export const userRouter = new Hono<AppEnvironment>();
 
@@ -11,6 +12,14 @@ userRouter.post('/signup', async (c) => {
 
   try{
     const body = await c.req.json();
+
+    const { success } = signupInput.safeParse(body);
+    if(!success){
+      return c.json({
+        error: "Invalid inputs"
+      },422)
+    }
+
     const hashedPassword = await hashPassword(body.password);
     const user = await prisma.user.create({
       data:{
@@ -46,6 +55,14 @@ userRouter.post('/login', async (c) => {
 
   try {
     const body = await c.req.json();
+    
+    const { success } = signupInput.safeParse(body);
+    if(!success){
+      return c.json({
+        error: "Invalid inputs"
+      },422)
+    }
+
     const hashedAttempt = await hashPassword(body.password);
     const user = await prisma.user.findUnique({
       where: {

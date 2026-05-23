@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { verify } from 'hono/jwt';
 import { AppEnvironment } from '../types';
+import { createBlogInput, updateBlogInput } from '../validation';
 
 export const blogRouter = new Hono<AppEnvironment>();
 
@@ -9,7 +10,7 @@ blogRouter.use('/*', async (c, next) => {
   
   if(!header){
     return c.json({
-      error : "Your authorization has expired\nPlease log/sign in again"
+      error : "Your authorization has expired, Please log/sign in again"
     }, 403)
   }
   const token = header.split(" ")[1];
@@ -29,6 +30,14 @@ blogRouter.use('/*', async (c, next) => {
 
 blogRouter.post('/', async (c) => {
   const body = await c.req.json();
+
+  const { success } = createBlogInput.safeParse(body);
+      if(!success){
+        return c.json({
+          error: "Invalid inputs"
+        },422)
+      }
+
   const authorId = c.get("userId")
   const prisma = c.get('prisma');
 
@@ -53,6 +62,14 @@ blogRouter.post('/', async (c) => {
 
 blogRouter.put('/', async (c) => {
   const body = await c.req.json();
+
+  const { success } = createBlogInput.safeParse(body);
+      if(!success){
+        return c.json({
+          error: "Invalid inputs"
+        },422)
+      }
+
   const prisma = c.get('prisma');
   try{
     const blog = await prisma.blog.update({
