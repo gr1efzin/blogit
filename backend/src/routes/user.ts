@@ -1,5 +1,5 @@
 import { Hono } from 'hono';
-import { Prisma } from "@prisma/client/edge";
+import { Prisma } from "../generated/prisma/client";
 import { sign } from 'hono/jwt';
 import { AppEnvironment, hashPassword } from '../types';
 import { signupInput, loginInput } from '../validation';
@@ -56,7 +56,7 @@ userRouter.post('/login', async (c) => {
   try {
     const body = await c.req.json();
     
-    const { success } = signupInput.safeParse(body);
+    const { success } = loginInput.safeParse(body);
     if(!success){
       return c.json({
         error: "Invalid inputs"
