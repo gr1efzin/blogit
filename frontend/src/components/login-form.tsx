@@ -9,12 +9,32 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import { useState, type ChangeEvent } from "react"
+import type { LoginInput } from "@/validation"
+import axios from "axios"
+import { BACKEND_URL } from "@/config"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
+  const [postInputs, setpostInputs] = useState<LoginInput>({
+      email: "",
+      password:""
+  })
+
+    async function SendReq(){
+    try{
+      const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`,postInputs);
+      const jwt = response.data;
+      localStorage.setItem("token", jwt);
+      navigate("/blogs")
+    }catch(e){
+      console.log(e)
+    }
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form>
@@ -33,6 +53,10 @@ export function LoginForm({
           <Field>
             <FieldLabel htmlFor="email">Email <span className="text-destructive">*</span> </FieldLabel>
             <Input
+            value={postInputs.email} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
+              ...c,
+              email: e.target.value     
+              }))}
               id="email"
               type="email"
               placeholder="m@example.com"
@@ -43,13 +67,17 @@ export function LoginForm({
           <Field>
             <FieldLabel htmlFor="password">Password <span className="text-destructive">*</span> </FieldLabel>
             <Input
+              value={postInputs.password} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
+              ...c,
+              password: e.target.value     
+              }))}
               id="password"
               type="password"
               required
             />
           </Field>
           <Field>
-            <Button type="submit">Login</Button>
+            <Button onClick={SendReq} type="button">Login</Button>
           </Field>
         
 

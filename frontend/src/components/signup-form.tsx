@@ -9,22 +9,34 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 import { useState, type ChangeEvent } from "react"
 import type { SignupInput } from "@/validation"
+import axios from "axios";
+import { BACKEND_URL } from "@/config"
 
 export function SignupForm({
   
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
   const [postInputs, setpostInputs] = useState<SignupInput>({
       email: "",
       name: "",
       password:""
   })
-  // const [name, setName] = useState("")
-  // const [password, setPassword] = useState("")
+
+  async function SendReq(){
+    try{
+      const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,postInputs);
+      const jwt = response.data;
+      localStorage.setItem("token", jwt);
+      navigate("/blogs")
+    }catch(e){
+      console.log(e)
+    }
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form>
@@ -75,13 +87,13 @@ export function SignupForm({
                 password: e.target.value
               }))}
               id="password"
-              type="passowrd"
+              type="password"
               required
             />
           </Field>
 
           <Field>
-            <Button className="text-xs" type="submit">Create Account</Button>
+            <Button onClick={SendReq} className="text-xs" type="button">Create Account</Button>
           </Field>
         </FieldGroup>
       </form>
