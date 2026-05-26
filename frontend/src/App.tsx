@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router"
 import { Blog } from "./pages/Blog"
 import { Login } from "./pages/Login"
 import { Signup } from "./pages/Signup"
+import { Blogs } from "./pages/Blogs"
 import { ModeToggle } from "./components/mode-toggle"
 
 function App() {
@@ -14,7 +15,8 @@ function App() {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/blogs" element={<Blog />} />
+          <Route path="/blog:id" element={<Blog />} />
+          <Route path="/blogs" element={<Blogs />} />
         </Routes>
       </div>
     </BrowserRouter>
