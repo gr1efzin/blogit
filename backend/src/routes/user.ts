@@ -20,11 +20,11 @@ userRouter.post('/signup', async (c) => {
       },422)
     }
 
-    const hashedPassword = await hashPassword(body.password);
+    const hashedPassword = await hashPassword(body.password.trim());
     const user = await prisma.user.create({
       data:{
-        email : body.email,
-        name : body.name,
+        email : body.email.trim(),
+        name : body.name.trim(),
         password : hashedPassword
       }
     });
@@ -63,10 +63,10 @@ userRouter.post('/login', async (c) => {
       },422)
     }
 
-    const hashedAttempt = await hashPassword(body.password);
+    const hashedAttempt = await hashPassword(body.password.trim());
     const user = await prisma.user.findUnique({
       where: {
-        email: body.email,
+        email: body.email.trim(),
         password : hashedAttempt
       }
     });
