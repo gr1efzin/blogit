@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "./ui/spinner"
 import {
   Field,
   FieldDescription,
@@ -26,15 +27,19 @@ export function SignupForm({
       name: "",
       password:""
   })
+  const [loading, setLoading] = useState(false);
 
   async function SendReq(){
     try{
+      setLoading(true);
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,postInputs);
       const jwt = response.data;
       localStorage.setItem("token", jwt);
+      setLoading(false);
       navigate("/blogs")
     }catch(e){
       console.log(e)
+      setLoading(false);
     }
   }
   return (
@@ -93,7 +98,13 @@ export function SignupForm({
           </Field>
 
           <Field>
-            <Button onClick={SendReq} className="text-xs" type="button">Create Account</Button>
+            <Button onClick={SendReq} className="text-xs" type="button" disabled={loading}>
+              {loading ? (
+                <Spinner>Creating account...</Spinner>
+              ) : (
+                "Create Account"
+              )}
+            </Button>
           </Field>
         </FieldGroup>
       </form>

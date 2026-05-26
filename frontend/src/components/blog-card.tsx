@@ -13,8 +13,8 @@ export const BlogCard = ({
     publishedDate
 }: BlogCardProps) =>{
     return (
-    <div className="border-b-1 border-gray-250 pb-5">
-        <div className="flex justify-start">
+    <div className="p-4 border-b-1 border-slate-250 pb-5">
+        <div className="flex justify-start text-xs">
 
         <div className="pr-1 font-medium">{authorName}</div>
         <div>&bull; </div>
@@ -22,15 +22,13 @@ export const BlogCard = ({
 
         </div>
 
-        <div className="text-xl font-extrabold">
+        <div className="text-xl font-extrabold pt-2">
             {title}
         </div>
 
         <div className="text-base font-extralight">
             {content.slice(0,100) + "..."}
         </div>
-
-        <div ></div>
     </div>
     )
 }
