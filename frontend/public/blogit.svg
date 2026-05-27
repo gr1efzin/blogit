@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="BlogIt">
+  <rect x="0" y="0" width="100" height="100" fill="#ffffff" />
+  <text
+    x="50"
+    y="72"
+    text-anchor="middle"
+    font-family="Arial Black, Arial, system-ui, -apple-system, Segoe UI, sans-serif"
+    font-size="72"
+    fill="#000000"
+  >
+    B
+  </text>
+</svg>

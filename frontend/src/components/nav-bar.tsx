@@ -60,9 +60,15 @@ export const NavBar = () => {
                   handleLogoClick()
                   event.currentTarget.blur()
                 }}
-                className="focus:outline-none focus-visible:outline-none"
+                className="focus:outline-none focus-visible:outline-none inline-flex items-center gap-2"
               >
-                BlogIt
+                <span
+                  aria-hidden="true"
+                  className="inline-flex h-9 w-9 items-center justify-center bg-white text-black border border-border/60 font-black leading-none"
+                >
+                  B
+                </span>
+                <span>BlogIt</span>
               </Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
