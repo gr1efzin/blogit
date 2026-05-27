@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Blog" ALTER COLUMN "published" DROP DEFAULT,
+ALTER COLUMN "published" SET DATA TYPE TEXT;
