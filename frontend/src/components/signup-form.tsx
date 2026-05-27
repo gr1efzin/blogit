@@ -33,7 +33,7 @@ export function SignupForm({
     try{
       setLoading(true);
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,postInputs);
-      const jwt = response.data;
+      const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
       setLoading(false);
       navigate("/blogs")
@@ -52,7 +52,7 @@ export function SignupForm({
               className="flex flex-col items-center gap-2 font-medium"
             >
             </a>
-            <h1 className="text-3xl font-bold">Welcome to Blogit</h1>
+            <h1 className="text-3xl font-bold">Welcome to BlogIt</h1>
             <FieldDescription>
               Already have an account? <Link to = {"/login"}>Log in</Link>
             </FieldDescription>
@@ -98,7 +98,7 @@ export function SignupForm({
           </Field>
 
           <Field>
-            <Button onClick={SendReq} className="text-xs" type="button" disabled={loading}>
+            <Button onClick={SendReq} className="text-sm" type="button" disabled={loading}>
               {loading ? (
                 <Spinner>Creating account...</Spinner>
               ) : (

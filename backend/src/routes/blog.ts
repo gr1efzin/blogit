@@ -100,10 +100,20 @@ blogRouter.get('/:id', async (c) => {
     const blog = await prisma.blog.findFirst({
       where: {
         id: id
+      },
+      select:{
+        id: true,
+        title: true,
+        content: true,
+        author: {
+          select: {
+            name: true
+          }
+        }
       }
     })
     return c.json({ 
-      Response: blog
+      "blog": blog
     }, 200)
   }catch(e){
     return c.json({
@@ -117,7 +127,18 @@ blogRouter.get('/', async (c) => {
   const prisma = c.get('prisma');
 
   try {
-    const blogs = await prisma.blog.findMany();
+    const blogs = await prisma.blog.findMany({
+      select:{
+        content: true,
+        title: true,
+        id: true,
+        author:{
+          select:{
+            name: true
+          }
+        }
+      }
+    });
     return c.json({ "blogs":blogs }, 200);
   } catch(e) {
     return c.json({ error: "Error fetching blogs" }, 500);

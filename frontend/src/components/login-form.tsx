@@ -31,7 +31,7 @@ export function LoginForm({
     try{
       setLoading(true);
       const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`,postInputs);
-      const jwt = response.data;
+      const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
       setLoading(false);
       navigate("/blogs")
@@ -50,7 +50,7 @@ export function LoginForm({
               className="flex flex-col items-center gap-2 font-medium"
             >
             </a>
-            <h1 className="text-xl font-bold">Welcome to Blogit</h1>
+            <h1 className="text-3xl font-bold">Welcome to BlogIt</h1>
             <FieldDescription>
               Don&apos;t have an account? <Link to = {"/signup"}>Sign up</Link>
             </FieldDescription>
@@ -82,7 +82,7 @@ export function LoginForm({
             />
           </Field>
           <Field>
-            <Button onClick={SendReq} type="button" disabled={loading}>
+            <Button onClick={SendReq} className="w-full" type="button" disabled={loading}>
               {loading ? (
                 <Spinner>Logging in...</Spinner>
               ) : (
