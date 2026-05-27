@@ -26,6 +26,7 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const isDeployed = typeof window !== "undefined" && window.location.hostname !== "localhost"
 
   const handleEmailChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
@@ -51,6 +52,17 @@ export function LoginForm({
       navigate("/blogs")
     }catch(e){
       if (axios.isAxiosError(e)) {
+        if (
+          isDeployed &&
+          (BACKEND_URL.includes("127.0.0.1") || BACKEND_URL.includes("localhost") || BACKEND_URL === "")
+        ) {
+          setErrorMessage(
+            "Backend URL is not set for production. Set VITE_BACKEND_URL in Vercel to your deployed backend (HTTPS), then redeploy."
+          )
+          setLoading(false)
+          return
+        }
+
         const status = e.response?.status
         const serverMessage =
           typeof e.response?.data?.error === "string" ? e.response.data.error : null
@@ -59,6 +71,10 @@ export function LoginForm({
           setErrorMessage(serverMessage ?? "User not found. Check your email and password.")
         } else if (status === 422) {
           setErrorMessage("Invalid Credentials")
+        } else if (!e.response) {
+          setErrorMessage(
+            "Could not reach the server. This is usually a wrong backend URL or a CORS issue."
+          )
         } else {
           setErrorMessage(serverMessage ?? "Unable to log in. Try again.")
         }
