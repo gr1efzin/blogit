@@ -1,4 +1,4 @@
-import { Link } from "react-router"
+import { Link, useLocation } from "react-router"
 
 interface BlogCardProps {
     authorName: string,
@@ -16,6 +16,7 @@ export const BlogCard = ({
     publishedDate,
     id
 }: BlogCardProps) =>{
+    const { pathname } = useLocation()
     return (
         
     <div className="p-4 border-b-1 border-slate-250 pb-5">
@@ -26,7 +27,7 @@ export const BlogCard = ({
         <div className="font-thin pl-1 cursor-default">{publishedDate}</div>
 
         </div>
-        <Link to = {`/blog/${id}`}>
+        <Link to = {`/blog/${id}`} state={{ from: pathname }}>
         <div className="text-xl font-black pt-2 cursor-pointer">
             {title}
         </div>

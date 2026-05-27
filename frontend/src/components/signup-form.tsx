@@ -10,11 +10,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Link, useNavigate } from "react-router"
-import { useState, type ChangeEvent } from "react"
-import type { SignupInput } from "@/validation"
+import { useCallback, useState, type ChangeEvent } from "react"
 import axios from "axios";
 import { BACKEND_URL } from "@/config"
+import { AlertCircle } from "lucide-react"
 
 export function SignupForm({
   
@@ -22,23 +23,56 @@ export function SignupForm({
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
-  const [postInputs, setpostInputs] = useState<SignupInput>({
-      email: "",
-      name: "",
-      password:""
-  })
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleEmailChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
+    if (errorMessage) setErrorMessage(null)
+  }, [errorMessage])
+
+  const handleNameChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value)
+    if (errorMessage) setErrorMessage(null)
+  }, [errorMessage])
+
+  const handlePasswordChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value)
+    if (errorMessage) setErrorMessage(null)
+  }, [errorMessage])
 
   async function SendReq(){
     try{
+      setErrorMessage(null)
       setLoading(true);
-      const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`,postInputs);
+      const response = await axios.post(`${BACKEND_URL}/api/v1/user/signup`, {
+        email,
+        name,
+        password,
+      });
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
       setLoading(false);
       navigate("/blogs")
     }catch(e){
-      console.log(e)
+      if (axios.isAxiosError(e)) {
+        const status = e.response?.status
+        const serverMessage =
+          typeof e.response?.data?.error === "string" ? e.response.data.error : null
+
+        if (status === 409) {
+          setErrorMessage(serverMessage ?? "A user with this email already exists.")
+        } else if (status === 422) {
+          setErrorMessage("Invalid Credentials")
+        } else {
+          setErrorMessage(serverMessage ?? "Unable to sign up. Try again.")
+        }
+      } else {
+        setErrorMessage("Unable to sign up. Try again.")
+      }
       setLoading(false);
     }
   }
@@ -57,13 +91,20 @@ export function SignupForm({
               Already have an account? <Link to = {"/login"}>Log in</Link>
             </FieldDescription>
           </div>
+          {errorMessage && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <div>
+                <AlertTitle>Sign up failed</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </div>
+            </Alert>
+          )}
           <Field>
             <FieldLabel className="text-sm" htmlFor="email">Email <span className="text-destructive">*</span> </FieldLabel>
             <Input
-              value={postInputs.email} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
-                ...c,
-                email: e.target.value
-              }))}
+              value={email}
+              onChange={handleEmailChange}
               id="email"
               type="email"
               placeholder="me@example.com"
@@ -74,10 +115,8 @@ export function SignupForm({
           <Field>
             <FieldLabel className="text-sm" htmlFor="name">Name</FieldLabel>
             <Input
-              value={postInputs.name} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
-                ...c,
-                name: e.target.value
-              }))}
+              value={name}
+              onChange={handleNameChange}
               id="name"
               type="name"
               placeholder="John Doe"
@@ -87,10 +126,8 @@ export function SignupForm({
           <Field>
             <FieldLabel className="text-sm" htmlFor="password">Password <span className="text-destructive">*</span> </FieldLabel>
             <Input
-              value={postInputs.password} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
-                ...c,
-                password: e.target.value
-              }))}
+              value={password}
+              onChange={handlePasswordChange}
               id="password"
               type="password"
               required

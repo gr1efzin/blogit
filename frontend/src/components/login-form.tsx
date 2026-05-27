@@ -10,33 +10,61 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Link, useNavigate } from "react-router"
-import { useState, type ChangeEvent } from "react"
-import type { LoginInput } from "@/validation"
+import { useCallback, useState, type ChangeEvent } from "react"
 import axios from "axios"
 import { BACKEND_URL } from "@/config"
+import { AlertCircle } from "lucide-react"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const navigate = useNavigate();
-  const [postInputs, setpostInputs] = useState<LoginInput>({
-      email: "",
-      password:""
-  })
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleEmailChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value)
+    if (errorMessage) setErrorMessage(null)
+  }, [errorMessage])
+
+  const handlePasswordChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value)
+    if (errorMessage) setErrorMessage(null)
+  }, [errorMessage])
 
     async function SendReq(){
     try{
+      setErrorMessage(null)
       setLoading(true);
-      const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`,postInputs);
+      const response = await axios.post(`${BACKEND_URL}/api/v1/user/login`, {
+        email,
+        password,
+      });
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
       setLoading(false);
       navigate("/blogs")
     }catch(e){
-      console.log(e)
+      if (axios.isAxiosError(e)) {
+        const status = e.response?.status
+        const serverMessage =
+          typeof e.response?.data?.error === "string" ? e.response.data.error : null
+
+        if (status === 403) {
+          setErrorMessage(serverMessage ?? "User not found. Check your email and password.")
+        } else if (status === 422) {
+          setErrorMessage("Invalid Credentials")
+        } else {
+          setErrorMessage(serverMessage ?? "Unable to log in. Try again.")
+        }
+      } else {
+        setErrorMessage("Unable to log in. Try again.")
+      }
       setLoading(false);
     }
   }
@@ -55,13 +83,20 @@ export function LoginForm({
               Don&apos;t have an account? <Link to = {"/signup"}>Sign up</Link>
             </FieldDescription>
           </div>
+          {errorMessage && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <div>
+                <AlertTitle>Login failed</AlertTitle>
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </div>
+            </Alert>
+          )}
           <Field>
             <FieldLabel htmlFor="email">Email <span className="text-destructive">*</span> </FieldLabel>
             <Input
-            value={postInputs.email} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
-              ...c,
-              email: e.target.value     
-              }))}
+            value={email}
+            onChange={handleEmailChange}
               id="email"
               type="email"
               placeholder="m@example.com"
@@ -72,10 +107,8 @@ export function LoginForm({
           <Field>
             <FieldLabel htmlFor="password">Password <span className="text-destructive">*</span> </FieldLabel>
             <Input
-              value={postInputs.password} onChange={(e:ChangeEvent<HTMLInputElement>) => setpostInputs(c => ({
-              ...c,
-              password: e.target.value     
-              }))}
+              value={password}
+              onChange={handlePasswordChange}
               id="password"
               type="password"
               required

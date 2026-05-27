@@ -1,13 +1,33 @@
 import { BlogCard } from "@/components/blog-card"
+import { BlogCardSkeleton } from "@/components/blog-skeleton";
 import { NavBar } from "@/components/nav-bar"
 import { getAuthorName, useBlogs } from "@/hooks"
+import { formatDate } from "@/lib/utils";
+import { Navigate } from "react-router";
 
 export const Blogs = () =>{
+    const token = localStorage.getItem("token");
     const {loading,blogs} = useBlogs();
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
     if(loading){
-        return <div>
-            loading...
+        return ( 
+        <div>
+            <div className="pb-4 border-b">
+                <NavBar />
+            </div>
+            <div className="flex justify-center">
+                <div className="w-full max-w-4xl">
+                    <BlogCardSkeleton />
+                    <BlogCardSkeleton />
+                    <BlogCardSkeleton />
+                    <BlogCardSkeleton />
+                    <BlogCardSkeleton />
+                </div>
+            </div>
         </div>
+        )
     }
     return(
     <div>
@@ -16,12 +36,13 @@ export const Blogs = () =>{
         </div>
 
         <div className="flex justify-center">
-                <div className="max-w-4xl">
+            <div className="w-full max-w-4xl">
                     {blogs.map(blog => <BlogCard   
+                        key={blog.id}
                         authorName = {getAuthorName(blog.author)}
                         title = {blog.title}
                         content = {blog.content}
-                        publishedDate = {"25th May 2026"}
+                        publishedDate = {blog.published ? formatDate(blog.published) : "Unknown Date"}
                         id ={blog.id} 
                     />)} 
                 </div>

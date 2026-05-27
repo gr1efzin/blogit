@@ -92,9 +92,37 @@ blogRouter.put('/', async (c) => {
   }
 })
 
+blogRouter.get('/my-blogs', async (c) => {
+  const prisma = c.get('prisma');
+  const userId = c.get("userId");
+
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: {
+        authorId: userId
+      },
+      select: {
+        content: true,
+        title: true,
+        id: true,
+        published: true,
+        author: {
+          select: {
+            name: true
+          }
+        }
+      }
+    });
+    return c.json({ blogs }, 200);
+  } catch (e) {
+    return c.json({ error: "Error fetching your blogs" }, 500);
+  }
+})
+
 blogRouter.get('/:id', async (c) => {
   const id = c.req.param('id');
   const prisma = c.get('prisma');
+  const userId = c.get("userId");
 
   try{
     const blog = await prisma.blog.findFirst({
@@ -103,6 +131,7 @@ blogRouter.get('/:id', async (c) => {
       },
       select:{
         id: true,
+        authorId: true,
         title: true,
         content: true,
         published: true,
@@ -113,14 +142,60 @@ blogRouter.get('/:id', async (c) => {
         }
       }
     })
+    if (!blog) {
+      return c.json({ blog: null }, 404)
+    }
     return c.json({ 
-      "blog": blog
+      "blog": {
+        id: blog.id,
+        title: blog.title,
+        content: blog.content,
+        published: blog.published,
+        author: blog.author,
+        isOwner: blog.authorId === userId
+      }
     }, 200)
   }catch(e){
     return c.json({
       error : "There was an error while fetching blogs"
     }, 500)
     
+  }
+})
+
+blogRouter.delete('/:id', async (c) => {
+  const id = c.req.param('id');
+  const prisma = c.get('prisma');
+  const userId = c.get("userId");
+
+  try {
+    const blog = await prisma.blog.findUnique({
+      where: {
+        id
+      },
+      select: {
+        id: true,
+        authorId: true
+      }
+    });
+
+    if (!blog) {
+      return c.json({ error: "Blog not found" }, 404);
+    }
+
+    if (blog.authorId !== userId) {
+      return c.json({ error: "You are not allowed to delete this blog" }, 403);
+    }
+
+    await prisma.blog.delete({
+      where: {
+        id
+      }
+    });
+
+    return c.json({ message: "Blog deleted successfully" }, 200);
+  } catch (e) {
+    return c.json({ error: "There was an error while deleting the blog" }, 500);
   }
 })
 

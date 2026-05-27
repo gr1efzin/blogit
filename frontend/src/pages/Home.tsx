@@ -1,13 +1,17 @@
 
 import { NavBar } from '@/components/nav-bar'
 import { ArrowRight, Zap, Users, BookOpen } from 'lucide-react'
-import { Link, Navigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 
 export function HomePage() {
-  const token = localStorage.getItem("token")
+  const navigate = useNavigate()
 
-  if (token) {
-    return <Navigate to="/blogs" replace />
+  const handleAuthLink = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    const token = localStorage.getItem("token")
+    if (!token) return
+
+    event.preventDefault()
+    navigate("/blogs")
   }
 
   return (
@@ -22,7 +26,9 @@ export function HomePage() {
           <p className="text-lg opacity-70 mb-8 max-w-2xl mx-auto leading-relaxed">
             The modern blogging platform built for writers who want to focus on what matters most — their words. Clean, distraction-free, and powerful.
           </p>
-          <Link to={"/login"}
+          <Link
+            to={"/login"}
+            onClick={handleAuthLink}
             className="px-6 py-3 bg-red-600 hover:bg-red-700 transition rounded text-white font-semibold flex items-center gap-2 justify-center w-fit mx-auto"
           >
             Get Started <ArrowRight className="w-4 h-4" />
@@ -72,7 +78,9 @@ export function HomePage() {
           <p className="text-lg opacity-70 mb-8">
             Join thousands of writers already publishing on BlogIt. It takes less than a minute to get started.
           </p>
-          <Link to={"/signup"}
+          <Link
+            to={"/signup"}
+            onClick={handleAuthLink}
             className="inline-flex px-8 py-4 bg-red-600 hover:bg-red-700 transition rounded text-white font-semibold gap-2"
           >
             Create Your Account <ArrowRight className="w-5 h-5" />
