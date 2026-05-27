@@ -17,6 +17,8 @@ export const NavBar = () => {
   const showWrite = pathname === "/blogs" || pathname.startsWith("/blog/") || pathname.startsWith("/blogs/")
   const token = localStorage.getItem("token")
   const isLoggedIn = !!token
+  const isLandingPage = pathname === "/"
+  const showAvatarMenu = isLoggedIn && !isLandingPage
 
   useEffect(() => {
     setOpen(false)
@@ -86,7 +88,7 @@ export const NavBar = () => {
         )}
         <ModeToggle />
 
-        {isLoggedIn && (
+        {showAvatarMenu && (
           <div ref={dropdownRef} className="relative">
             <button
               type="button"
