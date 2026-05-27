@@ -27,7 +27,7 @@ export const BlogCard = ({
 
         </div>
         <Link to = {`/blog/${id}`}>
-        <div className="text-xl font-extrabold pt-2 cursor-pointer">
+        <div className="text-xl font-black pt-2 cursor-pointer">
             {title}
         </div>
 

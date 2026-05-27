@@ -11,6 +11,11 @@ export interface Blog {
     }
 }
 
+export const DEFAULT_AUTHOR_NAME = "Anonymous";
+
+export const getAuthorName = (author?: Blog["author"] | null) =>
+    author?.name ?? DEFAULT_AUTHOR_NAME;
+
 export const useBlog = ({id}: {id: string}) =>{
     const [loading, setLoading] = useState(true);
     const [blog, setBlog] = useState<Blog>();

@@ -1,6 +1,6 @@
 import { BlogCard } from "@/components/blog-card"
 import { NavBar } from "@/components/nav-bar"
-import { useBlogs } from "@/hooks"
+import { getAuthorName, useBlogs } from "@/hooks"
 
 export const Blogs = () =>{
     const {loading,blogs} = useBlogs();
@@ -15,18 +15,16 @@ export const Blogs = () =>{
             <NavBar />
         </div>
 
-        <div className="flex justify-center ">
-            <div className="">
+        <div className="flex justify-center">
                 <div className="max-w-4xl">
                     {blogs.map(blog => <BlogCard   
-                        authorName = {blog.author.name ?? "Anonymous"}
+                        authorName = {getAuthorName(blog.author)}
                         title = {blog.title}
                         content = {blog.content}
                         publishedDate = {"25th May 2026"}
                         id ={blog.id} 
                     />)} 
                 </div>
-            </div>
         </div>
     </div>
     )

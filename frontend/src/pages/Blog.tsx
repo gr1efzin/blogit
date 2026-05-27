@@ -21,8 +21,12 @@ export const Blog = () =>{
      
     return(
         <>
-        <NavBar />
-        <CurrBlog blog = {blog} />
+            <div className="pb-4 border-b">
+                <NavBar/>
+            </div>
+            <div className="flex justify-center">
+                <CurrBlog blog = {blog} />
+            </div>
         </>
     )
 }
