@@ -1,21 +1,24 @@
-# React + TypeScript + Vite + shadcn/ui
+# BlogIt Frontend
 
-This is a template for a new Vite project with React, TypeScript, and shadcn/ui.
+React + TypeScript + Vite SPA for BlogIt.
 
-## Adding components
-
-To add components to your app, run the following command:
+## Local development (pnpm)
 
 ```bash
-npx shadcn@latest add button
+pnpm install
+pnpm dev
 ```
 
-This will place the ui components in the `src/components` directory.
+App runs on `http://localhost:5173`.
 
-## Using components
+## Backend URL
 
-To use the components in your app, import them as follows:
+- Production: set **`VITE_BACKEND_URL`** in your Vercel project env vars to your deployed backend base URL.
+- Local dev: `vite.config.ts` proxies `/api/*` to `http://127.0.0.1:8787` (Wrangler), so `VITE_BACKEND_URL` is optional locally.
 
-```tsx
-import { Button } from "@/components/ui/button"
-```
+## Vercel routing (important)
+
+This app uses React Router (`BrowserRouter`). To avoid 404 on refresh for routes like `/blogs`, `/blog/:id`, `/login`, `/publish`, etc., we ship:
+
+- `vercel.json` (SPA rewrite)
+
