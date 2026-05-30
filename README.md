@@ -2,7 +2,7 @@
 
 Full‑stack minimalistic blogging app.
 
-- **Frontend**: React + TypeScript + Vite + Tailwind (pnpm) in `frontend/`
+- **Frontend**: React + TypeScript + Vite + Tailwind + shadcn in `frontend/`
 - **Backend**: Cloudflare Workers (Wrangler) + Hono + Prisma Accelerate in `backend/`
 
 ## Requirements
