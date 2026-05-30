@@ -29,7 +29,7 @@ export function HomePage() {
           <Link
             to={"/login"}
             onClick={handleAuthLink}
-            className="px-6 py-3 bg-red-600 hover:bg-red-700 transition rounded text-white font-semibold flex items-center gap-2 justify-center w-fit mx-auto"
+            className="px-6 py-3 bg-red-600 hover:bg-red-700 transition  text-white font-semibold flex items-center gap-2 justify-center w-fit mx-auto"
           >
             Get Started <ArrowRight className="w-4 h-4" />
           </Link>
@@ -81,7 +81,7 @@ export function HomePage() {
           <Link
             to={"/signup"}
             onClick={handleAuthLink}
-            className="inline-flex px-8 py-4 bg-red-600 hover:bg-red-700 transition rounded text-white font-semibold gap-2"
+            className="inline-flex px-8 py-4 bg-red-600 hover:bg-red-700 transition text-white font-semibold gap-2"
           >
             Create Your Account <ArrowRight className="w-5 h-5" />
           </Link>
