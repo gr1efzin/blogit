@@ -9,6 +9,7 @@ export function WriteEditor() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [saved, setSaved] = useState(false)
+  const [publishing, setPublishing] = useState(false)
   const [preview, setPreview] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const titleRef = useRef<HTMLTextAreaElement | null>(null)
@@ -31,12 +32,16 @@ export function WriteEditor() {
   }, [errorMessage])
 
   const handlePublish = useCallback(async () => {
+    if (publishing) return
+
     setErrorMessage(null)
 
     if (!title.trim() || !content.trim()) {
       setErrorMessage("Title and content are required.")
       return
     }
+
+    setPublishing(true)
 
     try {
       const token = localStorage.getItem("token")
@@ -56,6 +61,7 @@ export function WriteEditor() {
       setTimeout(() => setSaved(false), 2000)
       navigate(`/blog/${res.data.id}`)
     } catch (e) {
+      setPublishing(false)
       if (axios.isAxiosError(e)) {
         const serverMessage =
           typeof e.response?.data?.error === "string" ? e.response.data.error : null
@@ -64,7 +70,7 @@ export function WriteEditor() {
         setErrorMessage("Unable to publish. Try again.")
       }
     }
-  }, [content, navigate, title])
+  }, [content, navigate, publishing, title])
 
   const wordCount = useMemo(
     () => content.split(/\s+/).filter(w => w.length > 0).length,
@@ -86,10 +92,12 @@ export function WriteEditor() {
               {preview ? 'Edit' : 'Preview'}
             </button>
             <button
+              type="button"
               onClick={handlePublish}
-              className="flex items-center gap-2 bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700 transition">
+              disabled={publishing}
+              className="flex items-center gap-2 bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700 transition disabled:pointer-events-none disabled:opacity-50">
               <Save className="h-4 w-4" />
-              {saved ? 'Published!' : 'Publish'}
+              {publishing ? 'Publishing...' : saved ? 'Published!' : 'Publish'}
             </button>
           </div>
         </div>
