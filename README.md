@@ -21,7 +21,7 @@ Full‑stack minimalistic blogging app.
 
 - **`VITE_BACKEND_URL`**: base URL of the deployed backend
 
-### Backend (Wrangler)
+### Backend (Cloudflare Wrangler)
 
 Backend expects these bindings:
 
@@ -29,7 +29,7 @@ Backend expects these bindings:
 - **`DIRECT_DATABASE_URL`** (used by Prisma config)
 - **`JWT_SECRET`**
 
-Wrangler will load secrets from `backend/.env` when running locally (do not commit secrets).
+Wrangler will load secrets from `backend/.env` when running locally.
 
 ## Run locally (pnpm)
 
@@ -65,4 +65,3 @@ Deploy the Worker from `backend/`:
 cd backend
 pnpm deploy
 ```
-
