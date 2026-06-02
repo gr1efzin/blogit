@@ -16,7 +16,7 @@ export function HomePage() {
 
   return (
     <div className="bg-background text-foreground font-mono min-h-screen">
-      {/* Hero Section */}
+  
       <NavBar />
       <section className="border-b border-border py-24">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -36,7 +36,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Features Section */}
+      
       <section id="features" className="border-b border-border py-24">
         <div className="max-w-6xl mx-auto px-6">
           <h3 className="text-4xl font-bold mb-16 text-center">Why writers choose BlogIt</h3>
@@ -71,7 +71,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* CTA Section */}
+      
       <section className="py-24">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h3 className="text-4xl font-bold mb-6">Ready to start writing?</h3>
